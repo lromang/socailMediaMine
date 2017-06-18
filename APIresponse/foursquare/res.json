@@ -1,0 +1,1 @@
+client.venues.search(params={'query': 'tacos', 'll': '19.311519, -99.245213'})
