@@ -88,7 +88,7 @@ var isNotAuthenticated = function (req, res, next) {
     if (req.isUnauthenticated())
         return next();
     // if the user is authenticated then redirect him to the main page
-    res.redirect('/dashboard');
+    res.redirect('/index');
 };
 
 
@@ -103,7 +103,7 @@ var createHash = function(password){
 
 /* Handle Login POST */
 router.post('/login', passport.authenticate('login', {
-    successRedirect: '/dashboard',
+    successRedirect: '/index',
     failureRedirect: '/',
     failureFlash : true
 }));
@@ -122,19 +122,12 @@ router.get('/', isNotAuthenticated, function(req, res, next) {
 
 /*Dashboard*/
 
-router.get('/dashboard', isAuthenticated, function (req, res) {
-    res.render('dashboard', {
+router.get('/index', isAuthenticated, function (req, res) {
+    res.render('index', {
             title: 'Picto',
             user: req.user,
             section: 'dashboard'
         });
-    }).catch(function(error){
-        console.log(error);
-        res.json({
-            message:'Ocurrió un error al cargar el usuario',
-            status: 'Error'
-        })
-    })
 });
 
 
