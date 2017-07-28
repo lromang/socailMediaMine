@@ -124,7 +124,7 @@ router.get('/', isNotAuthenticated, function(req, res, next) {
 
 router.get('/index', isAuthenticated, function (req, res) {
     res.render('index', {
-            title: 'Picto',
+            title: 'PictoDash',
             user: req.user,
             section: 'dashboard'
         });

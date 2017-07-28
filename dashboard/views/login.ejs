@@ -13,22 +13,14 @@
     <title><%= title %></title>
     <!-- Bootstrap -->
     <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel='stylesheet' href='/stylesheets/style.css' />
     <!-- font awesome -->
     <link rel="stylesheet" href="/bower_components/font-awesome/css/font-awesome.min.css">
 
-    <style type="text/css">
-        body{
-            background-color: #444;
-            /*background: url(../images/pinlayer2.png),url(../images/pinlayer1.png),url(../images/back.png);*/
-        }
-    </style>
-
 </head>
 
-<body>
+<body style="display: flex; align-items: center">
 <!--<dgm-navbar></dgm-navbar>-->
-<div class="container container-table">
+<div class="container container-table" style="width:1000px; margin:0 auto;margin-top: 4cm">
     <div class="row vertical-center-row wrap">
         <div class="span12">
             <form class="form-horizontal"  method="POST" action='/login'>
@@ -68,6 +60,8 @@
 <!--<dgm-footer class="footer"></dgm-footer>-->
 
 </body>
+<script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
 <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
