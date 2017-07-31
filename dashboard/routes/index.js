@@ -20,6 +20,23 @@ router.use(passport.initialize());
 router.use(passport.session());
 var LocalStrategy = require('passport-local').Strategy;
 
+// ----------------------------------------------------
+// Useful functions
+function numericCol ( x ){
+    return ( x == '' || isNaN(x))?null:x;
+}
+
+function stob( str) {
+    return (str == 'true')
+}
+
+/* uploads */
+var multer = require ('multer');
+
+var upload = multer({
+    dest: path.join(__dirname, '..', 'uploads')
+});
+// ----------------------------------------------------
 
 /*
 * ################################################
@@ -141,6 +158,30 @@ router.get('/tablero', isAuthenticated, function(req, res){
 /*Place*/
 router.post('/place', isAuthenticated, function(req, res){
     console.log(req.body);
+    /*
+     * ####################################################
+     * ## Google Places
+     * ####################################################
+     */
+    "use strict";
+
+    var querystring  = require("querystring");
+    var https        = require("https");
+    var assert       = require('assert');
+    var config       = require('../config')
+    // Search parameters
+    var parameters      = {key: config.apiKey}
+    parameters.location = numericCol(req.body.lat) + ',' + numericCol(req.body.lon);
+    parameters.radius   = numericCol(req.body.radius);
+    parameters.type     = req.body.type;
+
+    var options    = {
+        hostname: "maps.googleapis.com",
+        path: "/maps/api/place/nearbysearch/" + config.outputFormat + "?" + querystring.stringify(parameters)
+    };
+
+    console.log(options);
+
 })
 
 
