@@ -12,7 +12,8 @@
 <% include partials/navbar.ejs%>
 <div class="col-md-12">
    <div class="row" style='position:absolute; top:40px; width: 100%'>
-
+        <!--BEGIN INPUT FORM--->
+       <form>
        <div class="col-md-3" style="border:2px solid #FFAB00 !important; border-top:40px solid #FFAB00 !important; border-radius: 5px">
             <h3 style="color:white; margin-top:-30px;">Filtros de búsqueda</h3>
             <h4 style="color: #9e9e9e; margin-top:20px"><strong>Ubicación</strong></h4>
@@ -44,9 +45,13 @@
                <label>Específicos</label>
                <input type="text" class="form-control" name="car" required>
            </p>
-
+           <br>
+           <p>
+               <button class="btn btn-primary" type="submit">Buscar</button>
+           </p>
         </div>
-
+       </form>
+       <!--END INPUT FORM--->
 
         <div class="col-md-8 col-md-offset-1" style="border-top:5px solid #212121 !important; border-radius: 5px">
             <h2>Resultados</h2>

@@ -6,3 +6,24 @@ body {
 a {
   color: #00B7FF;
 }
+
+
+.btn-primary {
+  background: none !important;
+  border: 2px solid #616161 !important; /*#a6192e*/;
+  color: #616161 !important; /*#a6192e*/;
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary {
+  background: #616161 !important/*#a6192e*/;
+  color: white !important;
+  border: 2px solid #616161 !important /*#a6192e*/;
+}
+
+btn-primary:active, btn-primary.active{
+  border-color: #9e9e9e !important;
+  background: #9e9e9e !important;
+  color: white;
+  box-shadow: none;
+}
+
