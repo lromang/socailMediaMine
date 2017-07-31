@@ -126,7 +126,7 @@ router.get('/index', isAuthenticated, function (req, res) {
     res.render('index', {
             title: 'PictoDash',
             user: req.user,
-            section: 'dashboard'
+            section: 'index'
         });
 });
 

@@ -14,7 +14,7 @@
             <ul class="nav navbar-nav">
                 <li class="<%= section=='index'?'active':'' %>"><a href="/index"><span class="fa fa-home"></span></a></li>
                 <% if ( user.permiso_tablero ) {%>
-                <!--<li class="<%= section=='tablero'?'active':'' %>"><a href="/tablero">Tablero</a></li>-->
+                <li class="<%= section=='tablero'?'active':'' %>"><a href="/tablero">Tablero</a></li>
                 <%}
                 if (user.permiso_administrador){%>
                 <li class="<%= section=='administrador'?'active':'' %>"><a href="/admin">Administrador</a></li>
