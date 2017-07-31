@@ -5,6 +5,8 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <!-- Bootstrap -->
     <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Boostrap Slider -->
+    <link href="/stylesheets/bootstrap-slider.min.css" rel="stylesheet">
     <!-- font awesome -->
     <link rel="stylesheet" href="/bower_components/font-awesome/css/font-awesome.min.css">
 </head>
@@ -21,13 +23,13 @@
                 <div class="col-md-6">
             <p>
                 <label>Latitud</label>
-                <input type="text" class="form-control" name="lat" required>
+                <input type="number" class="form-control" name="lat" step="0.01" required>
             </p>
                 </div>
                 <div class="col-md-6">
             <p>
                 <label>Longitud</label>
-                <input type="text" class="form-control" name="lon" required>
+                <input type="number" class="form-control" name="lon" step="0.01" required>
             </p>
                 </div>
             </div>
@@ -35,15 +37,19 @@
             <label>Dirección</label>
             <input type="text" class="form-control" name="dir" required>
            </p>
+           <p>
+               <label>Radio de búsqueda (km)</label>
+               <input type="text" name="radius" data-provide="slider" data-slider-min="0" data-slider-max="25" data-slider-step="5" data-slider-value="10">
+           </p>
            <hr>
             <h4 style="color: #9e9e9e; margin-top:20px"><strong>Características</strong></h4>
            <p>
                <label>Tipo de negocio</label>
-               <input type="text" class="form-control" name="tipo" required>
+               <input type="text" class="form-control" name="type">
            </p>
            <p>
                <label>Específicos</label>
-               <input type="text" class="form-control" name="car" required>
+               <input type="text" class="form-control" name="car">
            </p>
            <br>
            <p>
@@ -63,6 +69,9 @@
 </body>
 <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
 <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<!-- Dashboard JS -->
+<script src="/javascripts/dash.js"></script>
 <!-- Bootstrap JavaScript -->
 <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/javascripts/bootstrap-slider.min.js"> </script>
 </html>
