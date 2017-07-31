@@ -180,6 +180,7 @@ router.post('/place', isAuthenticated, function(req, res){
     var options = {
         url: "https://maps.googleapis.com" + "/maps/api/place/nearbysearch/" + config.outputFormat + "?" + querystring.stringify(parameters)
     };
+    console.log(options.url);
     // Request
     rp.post(options).then(function(data){console.log(data); res.json(data)}).catch(function(error){console.log(error)});
 })

@@ -27,6 +27,8 @@
     "passport-local": "^1.0.0",
     "pg-promise": "^5.3.4",
     "remove": "^0.1.5",
+    "request": "^2.81.0",
+    "request-promise": "^4.2.1",
     "serve-favicon": "~2.3.0",
     "xml": "^1.0.1"
   },
