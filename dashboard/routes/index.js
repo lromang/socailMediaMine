@@ -166,8 +166,9 @@ router.post('/place', isAuthenticated, function(req, res){
     "use strict";
 
     var querystring           = require("querystring");
-    var https                 = require("https");
-    var HttpResponseProcessor = require("googleplaces/lib/HttpResponseProcessor");
+    //var https                 = require("https");
+    var request               = require('request');
+    var rp                    = require('request-promise');
     var assert                = require('assert');
     var config                = require('../config')
     // Search parameters
@@ -177,11 +178,11 @@ router.post('/place', isAuthenticated, function(req, res){
     parameters.type     = req.body.type;
 
     var options    = {
-        hostname: "maps.googleapis.com",
+        url: "maps.googleapis.com",
         path: "/maps/api/place/nearbysearch/" + config.outputFormat + "?" + querystring.stringify(parameters)
     };
     // Request
-    https.request(options).pipe(request.put('/res.json'));
+    rp.post(options).then(function(data){console.log(data); res.json(data)})
 })
 
 
