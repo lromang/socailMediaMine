@@ -151,13 +151,14 @@ router.get('/tablero', isAuthenticated, function(req, res){
     res.render('tablero', {
         title: 'PictoDash',
         user: req.user,
-        section: 'tablero'
+        section: 'tablero',
+        places: null
     });
 })
 
 /*Place*/
-router.get('/place.json', isAuthenticated, function(req, res){
-    console.log(req.query);
+router.post('/place', isAuthenticated, function(req, res){
+    console.log(req.body);
     /*
      * ####################################################
      * ## Google Places
@@ -173,9 +174,9 @@ router.get('/place.json', isAuthenticated, function(req, res){
     var config                = require('../config')
     // Search parameters
     var parameters      = {key: config.apiKey}
-    parameters.location = numericCol(req.query.lat) + ',' + numericCol(req.query.lon);
-    parameters.radius   = numericCol(req.query.radius);
-    parameters.type     = req.query.type;
+    parameters.location = numericCol(req.body.lat) + ',' + numericCol(req.body.lon);
+    parameters.radius   = numericCol(req.body.radius);
+    parameters.type     = req.body.type;
 
     var options = {
         url: "https://maps.googleapis.com" + "/maps/api/place/nearbysearch/" + config.outputFormat + "?" + querystring.stringify(parameters),
@@ -183,7 +184,7 @@ router.get('/place.json', isAuthenticated, function(req, res){
     };
     console.log(options.url);
     // Request
-    rp.get(options).then(function(data){console.log(data);  res.json(data)}).catch(function(error){console.log(error)});
+    rp.post(options).then(function(data){console.log(data);  res.render('/tablero', {title:'pictoDash', user: req.user, section:'tablero', places:data.results})}).catch(function(error){console.log(error)});
 })
 
 
