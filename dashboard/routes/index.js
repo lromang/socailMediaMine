@@ -182,7 +182,7 @@ router.post('/place', isAuthenticated, function(req, res){
     };
     console.log(options.url);
     // Request
-    rp.post(options).then(function(data){console.log(data); res.json(data)}).catch(function(error){console.log(error)});
+    rp.post(options).then(function(data){console.log(data);  res.json(data)}).catch(function(error){console.log(error)});
 })
 
 
