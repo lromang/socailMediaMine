@@ -177,12 +177,11 @@ router.post('/place', isAuthenticated, function(req, res){
     parameters.radius   = numericCol(req.body.radius);
     parameters.type     = req.body.type;
 
-    var options    = {
-        url: "maps.googleapis.com",
-        path: "/maps/api/place/nearbysearch/" + config.outputFormat + "?" + querystring.stringify(parameters)
+    var options = {
+        url: "https://maps.googleapis.com" + "/maps/api/place/nearbysearch/" + config.outputFormat + "?" + querystring.stringify(parameters)
     };
     // Request
-    rp.post(options).then(function(data){console.log(data); res.json(data)})
+    rp.post(options).then(function(data){console.log(data); res.json(data)}).catch(function(error){console.log(error)});
 })
 
 
