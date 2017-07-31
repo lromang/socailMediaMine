@@ -120,8 +120,7 @@ router.get('/', isNotAuthenticated, function(req, res, next) {
     res.render('login', { title: '', message : req.flash('message') });
 });
 
-/*Dashboard*/
-
+/* Index */
 router.get('/index', isAuthenticated, function (req, res) {
     res.render('index', {
             title: 'PictoDash',
@@ -129,6 +128,15 @@ router.get('/index', isAuthenticated, function (req, res) {
             section: 'index'
         });
 });
+
+/* Dashboard */
+router.get('/tablero', isAuthenticated, function(req, res){
+    res.render('tablero', {
+        title: 'PictoDash',
+        user: req.user,
+        section: 'tablero'
+    });
+})
 
 
 module.exports = router;

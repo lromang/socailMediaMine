@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <!-- Bootstrap -->
+    <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- font awesome -->
+    <link rel="stylesheet" href="/bower_components/font-awesome/css/font-awesome.min.css">
+</head>
+<body>
+<% include partials/navbar.ejs%>
+<div class="row" style='position:absolute; top:80px; width: 100%'>
+        <div class="col-md-3" style=" background-color: #e0e0e0 !important">
+            <h2 style="color:white">Filtros de búsqueda</h2>
+        </div>
+        <div class="col-md-7 col-md-offset-1" style=" background-color: #e0e0e0 !important">
+            <h2>Resultados</h2>
+        </div>
+    </div>
+
+
+</body>
+<script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<!-- Bootstrap JavaScript -->
+<script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+</html>
