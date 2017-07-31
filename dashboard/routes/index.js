@@ -156,8 +156,8 @@ router.get('/tablero', isAuthenticated, function(req, res){
 })
 
 /*Place*/
-router.post('/place', isAuthenticated, function(req, res){
-    console.log(req.body);
+router.get('/place', isAuthenticated, function(req, res){
+    console.log(req.query);
     /*
      * ####################################################
      * ## Google Places
@@ -173,16 +173,16 @@ router.post('/place', isAuthenticated, function(req, res){
     var config                = require('../config')
     // Search parameters
     var parameters      = {key: config.apiKey}
-    parameters.location = numericCol(req.body.lat) + ',' + numericCol(req.body.lon);
-    parameters.radius   = numericCol(req.body.radius);
-    parameters.type     = req.body.type;
+    parameters.location = numericCol(req.query.lat) + ',' + numericCol(req.query.lon);
+    parameters.radius   = numericCol(req.query.radius);
+    parameters.type     = req.query.type;
 
     var options = {
         url: "https://maps.googleapis.com" + "/maps/api/place/nearbysearch/" + config.outputFormat + "?" + querystring.stringify(parameters)
     };
     console.log(options.url);
     // Request
-    rp.post(options).then(function(data){console.log(data);  res.json(data)}).catch(function(error){console.log(error)});
+    rp.get(options).then(function(data){console.log(data);  res.json(data)}).catch(function(error){console.log(error)});
 })
 
 
