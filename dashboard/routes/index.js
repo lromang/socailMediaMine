@@ -165,10 +165,11 @@ router.post('/place', isAuthenticated, function(req, res){
      */
     "use strict";
 
-    var querystring  = require("querystring");
-    var https        = require("https");
-    var assert       = require('assert');
-    var config       = require('../config')
+    var querystring           = require("querystring");
+    var https                 = require("https");
+    var HttpResponseProcessor = require("googleplaces/lib/HttpResponseProcessor");
+    var assert                = require('assert');
+    var config                = require('../config')
     // Search parameters
     var parameters      = {key: config.apiKey}
     parameters.location = numericCol(req.body.lat) + ',' + numericCol(req.body.lon);
@@ -179,9 +180,8 @@ router.post('/place', isAuthenticated, function(req, res){
         hostname: "maps.googleapis.com",
         path: "/maps/api/place/nearbysearch/" + config.outputFormat + "?" + querystring.stringify(parameters)
     };
-
-    console.log(options);
-
+    // Request
+    https.request(options).pipe(request.put('/res.json'));
 })
 
 
