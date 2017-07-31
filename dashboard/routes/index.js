@@ -156,7 +156,7 @@ router.get('/tablero', isAuthenticated, function(req, res){
 })
 
 /*Place*/
-router.get('/place', isAuthenticated, function(req, res){
+router.get('/place.json', isAuthenticated, function(req, res){
     console.log(req.query);
     /*
      * ####################################################
@@ -178,7 +178,8 @@ router.get('/place', isAuthenticated, function(req, res){
     parameters.type     = req.query.type;
 
     var options = {
-        url: "https://maps.googleapis.com" + "/maps/api/place/nearbysearch/" + config.outputFormat + "?" + querystring.stringify(parameters)
+        url: "https://maps.googleapis.com" + "/maps/api/place/nearbysearch/" + config.outputFormat + "?" + querystring.stringify(parameters),
+        json: true
     };
     console.log(options.url);
     // Request
