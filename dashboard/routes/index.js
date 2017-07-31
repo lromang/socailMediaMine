@@ -138,5 +138,10 @@ router.get('/tablero', isAuthenticated, function(req, res){
     });
 })
 
+/*Place*/
+router.post('/place', isAuthenticated, function(req, res){
+    console.log(req.body);
+})
+
 
 module.exports = router;
