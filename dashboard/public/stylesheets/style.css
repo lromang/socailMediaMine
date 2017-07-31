@@ -10,14 +10,14 @@ a {
 
 .btn-primary {
   background: none !important;
-  border: 2px solid #616161 !important; /*#a6192e*/;
-  color: #616161 !important; /*#a6192e*/;
+  border: 2px solid #BDBDBD !important; /*#a6192e*/;
+  color: #BDBDBD !important; /*#a6192e*/;
 }
 
 .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary {
-  background: #616161 !important/*#a6192e*/;
+  background: #BDBDBD !important/*#a6192e*/;
   color: white !important;
-  border: 2px solid #616161 !important /*#a6192e*/;
+  border: 2px solid #BDBDBD !important /*#a6192e*/;
 }
 
 btn-primary:active, btn-primary.active{
@@ -27,3 +27,6 @@ btn-primary:active, btn-primary.active{
   box-shadow: none;
 }
 
+#ex1Slider .slider-selection {
+  background: #BABABA;
+}
