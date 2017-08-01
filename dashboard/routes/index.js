@@ -184,7 +184,7 @@ router.post('/place', isAuthenticated, function(req, res){
     };
     console.log(options.url);
     // Request
-    rp.post(options).then(function(data){console.log(data);  res.render('/tablero', {title:'pictoDash', user: req.user, section:'tablero', places:data.results})}).catch(function(error){console.log(error)});
+    rp.post(options).then(function(data){console.log(data.results);  res.render('/tablero',{title: 'PictoDash', user:req.user, section:'tablero',places:data.results})}).catch(function(error){console.log(error)});
 })
 
 
