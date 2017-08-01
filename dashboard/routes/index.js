@@ -140,7 +140,7 @@ router.get('/', isNotAuthenticated, function(req, res, next) {
 /* Index */
 router.get('/index', isAuthenticated, function (req, res) {
     res.render('index', {
-            title: 'PictoDash',
+            title: 'Social Data Miner',
             user: req.user,
             section: 'index'
         });
