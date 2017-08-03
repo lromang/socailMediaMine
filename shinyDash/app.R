@@ -22,14 +22,34 @@ library(rsconnect)
 ## ----------------------------------------
 ui <- dashboardPage(
     dashboardHeader(),
-    dashboardSidebar(),
-    dashboardBody()
+    dashboardSidebar(
+        menuItem('Dashboard', tabName = 'dashboard', icon = icon('dashboard'))
+    ),
+    ## Body
+    dashboardBody(
+        ## Tab Items
+        tabItems(
+            fluidRow(
+                box(plotOutput('plot1', height = 250)),
+                box(title       = 'Controls',
+                    sliderInput('slider', 'Number of observations', 1, 100, 50))
+            ) ## Fluid Row End
+        ) ## Tab Items End
+    ) ## Body End
 )
 
 ## ----------------------------------------
 ## Back
 ## ----------------------------------------
-server <- function(input, output){}
+server <- function(input, output){
+    set.seed(122)
+    histdata <- rnorm(500)
+
+    output$plot1 <- renderPlot({
+        data <- histdata[seq_len(input$slider)]
+        hist(data)
+    })
+}
 
 ## ----------------------------------------
 ## Exec
