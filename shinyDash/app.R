@@ -29,11 +29,14 @@ ui <- dashboardPage(
     dashboardBody(
         ## Tab Items
         tabItems(
-            fluidRow(
-                box(plotOutput('plot1', height = 250)),
-                box(title       = 'Controls',
-                    sliderInput('slider', 'Number of observations', 1, 100, 50))
-            ) ## Fluid Row End
+            ## Tab Item: Dashboard
+            tabItem(tabName = 'dashboard',
+                    fluidRow(
+                        box(plotOutput('plot1', height = 250)),
+                        box(title       = 'Controls',
+                            sliderInput('slider', 'Number of observations', 1, 100, 50))
+                    ) ## Fluid Row End
+            ) ## Tab Item End: dashboard
         ) ## Tab Items End
     ) ## Body End
 )
