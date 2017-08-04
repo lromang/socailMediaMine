@@ -115,7 +115,7 @@ ui <- dashboardPage(
         fluidRow(
             box(
                 ## htmlOutput('map', height = 250)
-                leafletOutput('map')
+                leafletOutput('map', height = 300)
             )
         ) ## Fluid Row End
     ) ## Body End
@@ -149,6 +149,7 @@ server <- function(input, output){
             addProviderTiles(providers$Stamen.Terrain,
                              options = providerTileOptions(noWrap = TRUE)
                              ) %>%
+            setView(mean(places$lon), mean(places$lat), zoom = 13) %>%
             addMarkers(data = places, popup = paste(places$name,
                                                     places$type,
                                                     sep = ' '))
