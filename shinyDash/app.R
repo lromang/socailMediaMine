@@ -12,6 +12,7 @@
 
 ## Shiny libraries
 library(shiny)
+library(DT)
 library(shinydashboard)
 
 ## Shinyapps
@@ -113,11 +114,28 @@ ui <- dashboardPage(
     dashboardBody(
         ## Fluid Row
         fluidRow(
+            ## Box
             box(
-                ## htmlOutput('map', height = 250)
-                leafletOutput('map', height = 300)
+                title  = 'Places',
+                status = 'primary',
+                solidHeader = TRUE,
+                ## DIV
+                div(
+                    leafletOutput('map'),
+                    style = 'height: 100%; width: 100%'
+                ) ## Div End
+            ), ## Box End
+            box(
+                title       = 'Tweets',
+                status      = 'primary',
+                solidHeader = TRUE,
+                htmlOutput('mapbox')
             )
-        ) ## Fluid Row End
+        ), ## Fluid Row End
+        div(
+            DT::dataTableOutput('table'),
+            style='height: 50%; width: 100%;'
+        )
     ) ## Body End
 )
 
@@ -125,6 +143,7 @@ ui <- dashboardPage(
 ## Back
 ## ----------------------------------------
 server <- function(input, output){
+    ## MAP
     output$map <- renderLeaflet({
         lat <- input$lat
         lon <- input$lon
@@ -153,6 +172,34 @@ server <- function(input, output){
             addMarkers(data = places, popup = paste(places$name,
                                                     places$type,
                                                     sep = ' '))
+    })
+    ## TABLE
+    output$table <- renderDataTable({
+        lat <- input$lat
+        lon <- input$lon
+        ## In case there is a direction
+        if(input$dir != ''){
+            ## Geocode
+            coords <- geocode(input$dir)
+            ## Coords
+            lat    <- coords[2]
+            lon    <- coords[1]
+        }
+        ## Get places matrix
+        places <- gplaces(lat,
+                         lon,
+                         input$radius,
+                         input$type,
+                         input$key)
+        ## Places
+        places
+    }, options = list(scrollX    = TRUE,
+                      pageLength = 3)
+    )
+    ## FRAME
+    output$mapbox <- renderUI({
+        tags$iframe(src='https://igncazares.carto.com/builder/231f8fcb-800d-4ddb-a891-10b7f0911e64/embed',
+                    height=390, width = 500)
     })
 }
 
