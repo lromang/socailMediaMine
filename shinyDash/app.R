@@ -63,8 +63,7 @@ gplaces <- function(lat, lon, r, type, keyword){
     ## Acomodo los resultados en una matriz
     places           <- data.frame(matrix(0, length(document), 8))
     colnames(places) <- c("name", "rating", "type",
-                         "dir", "place_id", "lat", "lon",
-                         'latlon')
+                         "dir", "place_id", "lat", "lon")
     places$rating    <- NA
     for(i in 1:length(document)){
         places$name[i]     <- document[[i]]$name
@@ -73,9 +72,6 @@ gplaces <- function(lat, lon, r, type, keyword){
         if(length(document[[i]]$geometry$location) > 0){
             places$lat[i]    <- document[[i]]$geometry$location[1]
             places$lon[i]    <- document[[i]]$geometry$location[2]
-            places$latlon[i] <- paste(places$lat[i],
-                                     places$lon[i],
-                                     sep = ':')
         }
         ## If rating available
         if(length(document[[i]]$rating) > 0){
@@ -105,8 +101,8 @@ ui <- dashboardPage(
     dashboardHeader(title = 'Social Miner'),
     dashboardSidebar(
         h4('Ubicación'),
-        textInput('lon', 'Longitud', value = -0.09),
-        textInput('lat', 'Latitud', value = 51.505),
+        textInput('lon', 'Longitud', value = -99.171418),
+        textInput('lat', 'Latitud',  value = 19.404068),
         textInput('dir', 'Dirección'),
         h4('Características'),
         textInput('type', 'Tipo de local'),
@@ -117,7 +113,10 @@ ui <- dashboardPage(
     dashboardBody(
         ## Fluid Row
         fluidRow(
-            box(htmlOutput('map', height = 250))
+            box(
+                ## htmlOutput('map', height = 250)
+                leafletOutput('map')
+            )
         ) ## Fluid Row End
     ) ## Body End
 )
@@ -126,25 +125,31 @@ ui <- dashboardPage(
 ## Back
 ## ----------------------------------------
 server <- function(input, output){
-    output$map <- renderGvis({
-        print(input$lat)
-        print(input$lon)
-        print(paste(input$lat, input$lon, sep = ':'))
+    output$map <- renderLeaflet({
+        lat <- input$lat
+        lon <- input$lon
+        ## In case there is a direction
+        if(input$dir != ''){
+            ## Geocode
+            coords <- geocode(input$dir)
+            ## Coords
+            lat    <- coords[2]
+            lon    <- coords[1]
+        }
         ## Get places matrix
-        places <- gplaces(input$lat,
-                         input$lon,
+        places <- gplaces(lat,
+                         lon,
                          input$radius,
                          input$type,
                          input$key)
         ## Print places
         print(head(places))
         ## MAP
-        gvisMap(places, 'latlon', 'Tip',
-                options = list(showTip  = TRUE,
-                               showLine = TRUE,
-                               enableScrollWheel = TRUE,
-                               mapType = 'terrain',
-                               useMapTypeControl = TRUE))
+        leaflet() %>%
+            addProviderTiles(providers$Stamen.Terrain,
+                             options = providerTileOptions(noWrap = TRUE)
+                             ) %>%
+            addMarkers(data = places)
     })
 }
 
