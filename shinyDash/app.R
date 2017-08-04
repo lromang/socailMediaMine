@@ -149,7 +149,9 @@ server <- function(input, output){
             addProviderTiles(providers$Stamen.Terrain,
                              options = providerTileOptions(noWrap = TRUE)
                              ) %>%
-            addMarkers(data = places)
+            addMarkers(data = places, popup = paste(places$name,
+                                                    places$type,
+                                                    sep = ' '))
     })
 }
 
