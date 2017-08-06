@@ -1,5 +1,5 @@
 ###########################################
-## Author: Luis Manuel Román García
+## Author: Luis Manuel Roman Garcia
 ## ----------------------------------------
 ## Desc:
 ## Sample Dashboard for Google Places
@@ -35,15 +35,55 @@ library(stringr)
 
 ## JSON
 library(RJSONIO)
+library(jsonlite)
 
 ## Data frames
 library(reshape2)
 library(datasets)
 
+## YELP
+library(yelpr)
+
+## URL
+library(httr)
+library(httpuv)
+
 ## ----------------------------------------
 ## Functions
 ## ----------------------------------------
-gplaces <- function(lat, lon, r, type, keyword){
+
+## Gplaces details
+gplaces_details <- function(M){
+    ## Este codigo se corre cuando ya tenemos el numero de id_place
+    M$telefono   <- NA
+    M$horario    <- NA
+    M$web        <- NA
+    M$comentario <- NA
+    for (i in 1:nrow(M)){
+        b    <- paste("https://maps.googleapis.com/maps/api/place/details/json?placeid=",
+                     M$place_id[i],
+                     "&key=AIzaSyCHpy9FreifSRimSSkl4p7DV3wq4pNZ108",
+                     sep='')
+        detail <- RJSONIO::fromJSON(b)$result
+        ## Nos quedamos con aquellos datos que existan
+        if(length(detail$formatted_phone_number) > 0){
+            M$telefono[i] <- detail$formatted_phone_number
+        }
+        if(length(detail$opening_hours$weekday_text[1])>0){
+            M$horario[i] <- detail$opening_hours$weekday_text[1]
+        }
+        if(length(detail$reviews[[1]]$text)){
+            M$web[i] <- detail$reviews[[1]]$text
+        }
+        if(length(detail$website)>0){
+            M$comentario[i] <- detail$website
+        }
+    }
+    M
+}
+
+## GPlaces
+gplaces <- function(lat, lon, r, type, keyword = NULL){
     if (length(keyword) > 0){
         a <- paste("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=",
                   lat, ",", lon,
@@ -56,7 +96,7 @@ gplaces <- function(lat, lon, r, type, keyword){
         a <- paste("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=",
                   lat, ",", lon,
                   "&radius=", r,
-                  "&type", type,
+                  "&type=", type,
                   "&key=AIzaSyCHpy9FreifSRimSSkl4p7DV3wq4pNZ108",
                   sep = '')
     }
@@ -106,7 +146,7 @@ ui <- dashboardPage(
         textInput('lat', 'Latitud',  value = 19.404068),
         textInput('dir', 'Dirección'),
         h4('Características'),
-        textInput('type', 'Tipo de local'),
+        textInput('type', 'Tipo de local', value = 'restaurant'),
         textInput('key', 'Productos específicos'),
         sliderInput('radius', 'Radio: ', 1, 20, 5)
     ),
@@ -156,11 +196,12 @@ server <- function(input, output){
             lon    <- coords[1]
         }
         ## Get places matrix
-        places <- gplaces(lat,
-                         lon,
-                         input$radius,
-                         input$type,
-                         input$key)
+        places <- gplaces(lat     = lat,
+                         lon     = lon,
+                         r       = input$radius * 1000,
+                         type    = input$type,
+                         keyword = input$key)
+        places  <- gplaces_details(places)
         ## Print places
         print(head(places))
         ## MAP
@@ -171,6 +212,7 @@ server <- function(input, output){
             setView(mean(places$lon), mean(places$lat), zoom = 13) %>%
             addMarkers(data = places, popup = paste(places$name,
                                                     places$type,
+                                                    places$comentario,
                                                     sep = ' '))
     })
     ## TABLE
@@ -186,12 +228,14 @@ server <- function(input, output){
             lon    <- coords[1]
         }
         ## Get places matrix
-        places <- gplaces(lat,
-                         lon,
-                         input$radius,
-                         input$type,
-                         input$key)
+        places <- gplaces(lat     = lat,
+                         lon     = lon,
+                         r       = input$radius * 1000,
+                         type    = input$type,
+                         keyword = input$key)
+        places <- gplaces_details(places)
         ## Places
+        print(head(places))
         places
     }, options = list(scrollX    = TRUE,
                       pageLength = 3)
