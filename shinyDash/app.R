@@ -40,6 +40,8 @@ library(jsonlite)
 ## Data frames
 library(reshape2)
 library(datasets)
+library(plyr)
+library(dplyr)
 
 ## YELP
 library(yelpr)
@@ -48,9 +50,111 @@ library(yelpr)
 library(httr)
 library(httpuv)
 
+## Text
+library(stringr)
+library(tau)
+library(tm)
+
 ## ----------------------------------------
 ## Functions
 ## ----------------------------------------
+
+## Process text
+text_proc <- function(text){
+    text <- text                    %>%
+        removeNumbers()            %>%
+        tolower()                  %>%
+        removePunctuation()        %>%
+        str_replace_all("\t","")   %>%
+        iconv("UTF-8","ASCII","")  %>%
+        removeWords(stopwords("english"))
+    text
+}
+
+## Common words
+common_words <- function(text_vec, top_word_count = 5){
+    clean_text <- laply(text_vec, function(t) t <- text_proc(t))
+    clean_text <- paste(clean_text, collapse = ' ') %>%
+        tokenize()
+    clean_text <- clean_text[str_length(clean_text) > 2]
+    word_freq  <- plyr::count(clean_text)
+    top_word   <- head(word_freq[order(word_freq$freq,
+                                      decreasing = TRUE), ],
+                      top_word_count)
+    top_word
+}
+
+query_to_matrix <- function(url){
+    document <- RJSONIO::fromJSON(url)$results
+    ## Acomodo los resultados en una matriz
+    places           <- data.frame(matrix(0, length(document), 8))
+    colnames(places) <- c("name", "rating", "type",
+                         "dir", "place_id", "lat", "lon")
+    places$rating    <- NA
+    for(i in 1:length(document)){
+        places$name[i]     <- document[[i]]$name
+        places$place_id[i] <- document[[i]]$place_id
+        ## If location available
+        if(length(document[[i]]$geometry$location) > 0){
+            places$lat[i]    <- document[[i]]$geometry$location[1]
+            places$lon[i]    <- document[[i]]$geometry$location[2]
+        }
+        ## If rating available
+        if(length(document[[i]]$rating) > 0){
+            places$rating[i] <- document[[i]]$rating
+        }
+        ## If type available
+        if(length(document[[i]]$types) > 0){
+            vec <- c()
+            for(j in 1:(length(document[[i]]$types))){
+                vec <- paste(vec, document[[i]]$types[[j]], collapse = ' ')
+            }
+            places$type[i] <- vec
+        }
+        ## If vicinity available
+        if(length(document[[i]]$vicinity)>0){
+            places$dir[i] <- document[[i]]$vicinity
+        }
+    }
+    rownames(places) <- 1:nrow(places)
+    places
+}
+
+## Gplaces similar
+gplaces_similar <- function(place_id, r = 500){
+    url    <- paste("https://maps.googleapis.com/maps/api/place/details/json?placeid=",
+                   place_id,
+                   "&key=AIzaSyCHpy9FreifSRimSSkl4p7DV3wq4pNZ108",
+                   sep='')
+    detail <- RJSONIO::fromJSON(url)$result
+    lat    <- detail$geometry$location[1]
+    lon    <- detail$geometry$location[2]
+    ## Parsing Text
+    common_words_desc <- laply(detail$reviews,
+                              function(t)t <- t$text) %>%
+        common_words(top_word_count = 3)
+    ## Lookup by tags
+    tag_url <- paste("https://maps.googleapis.com/maps/api/place/textsearch/json?location=",
+                    lat, ",", lon,
+                    "&query=", paste(detail$types, collapse = '+'),
+                    "&radius=", r,
+                    "&key=AIzaSyCHpy9FreifSRimSSkl4p7DV3wq4pNZ108",
+                    sep='')
+    ## Lookup by desc
+    desc_url <- paste("https://maps.googleapis.com/maps/api/place/textsearch/json?location=",
+                     lat, ",", lon,
+                     "&query=", paste(common_words_desc$x, collapse = '+'),
+                     "&radius=", r,
+                     "&key=AIzaSyCHpy9FreifSRimSSkl4p7DV3wq4pNZ108",
+                     sep='')
+    ## RESULTS
+    tag_url_res  <- query_to_matrix(tag_url)
+    ## desc_url_res <- query_to_matrix(desc_url)
+    ## Unify
+    ## places <- rbind(query_to_matrix(tag_url), query_to_matrix(desc_url))
+    ## places[!duplicated(places), ]
+    tag_url_res
+}
 
 ## Gplaces details
 gplaces_details <- function(M){
