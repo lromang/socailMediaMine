@@ -51,17 +51,27 @@ library(tm)
 
 ## To Text
 toText <- function(messages){
-    messages <- removeNumbers(messages) %>%
-        tolower()                      %>%
-        removePunctuation()            %>%
-        str_replace_all("\t", "")      %>%
-        iconv("UTF-8", "UTF-8", "")    %>%
-        removeWords(stopwords("spanish"))
+    messages <- removeNumbers(messages)    %>%
+        tolower()                         %>%
+        removePunctuation()               %>%
+        str_replace_all("\t", "")         %>%
+        iconv("UTF-8", "UTF-8", "")       %>%
+        removeWords(stopwords("spanish")) %>%
+        str_replace_all("[^[[:print:]]]",
+                        "")               %>%
+        str_replace_all(" +", " ")
     messages
 }
 
 toTextList <- function(tags){
-    tags   <- llply(tags, function(t) t <- str_split(t, ','))
+    ## Clean tags
+    clean_tags   <- laply(tags,
+                         function(t) t <- paste(toText(str_split(t,
+                                                                ',')[[1]]),
+                                               collapse = " "
+                                               )
+                         )
+    clean_tags
 }
 
 ## ----------------------------------------
@@ -80,9 +90,9 @@ clean_data <- data.frame(
                            format = '%m/%d/%Y %H:%M',
                            tz = 'CT'),
     'contents'  = toText(data$Contenido),
-    'tags'      = toText(data$Tags),
+    'tags'      = toTextList(data$Tags),
     'type'      = toText(data$Generos),
-    'services'  = toText(data$Sevicios),
+    'services'  = toTextList(data$Sevicios),
     'schedule'  = data$Horario,
     'minPrice'  = data$Precio.inferior,
     'maxPrice'  = data$Precio.Superior,
@@ -93,7 +103,7 @@ clean_data <- data.frame(
     'visa'      = data$Visa,
     'state'     = data$Estado,
     'del'       = data$Delegación,
-    'neighborh' = data$Colonia,
+    'quarter'   = data$Colonia,
     'zip.code'  = data$Código.Postal,
     'street'    = data$Calle,
     'corner'    = data$Esquina,
@@ -106,3 +116,17 @@ clean_data <- data.frame(
     'web'       = data$Sitio.Web,
     'score'     = data$Calificación
 )
+clean_data$state[clean_data$state == 'Distrito Federal'] <- 'Ciudad de México'
+
+## ----------------------------------------
+## All text
+## ----------------------------------------
+
+## Paste Textual Variables
+all_text <- paste(clean_data$subTit,
+                 clean_data$contents,
+                 clean_data$tags,
+                 clean_data$services,
+                 sep = ' ')
+
+## Get Word Term Matrix
