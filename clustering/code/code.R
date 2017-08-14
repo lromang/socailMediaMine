@@ -191,11 +191,12 @@ tsne_data <- tsne_data$Y   %>%
 ## Spectral Clustering
 sc_cluster <- as.factor(specc(as.matrix(tsne_data), centers = 6))
 
-## plot
+## plot with clusters
 scPlot <- ggplot(data = tsne_data,
        aes(x = X,
            y = Y,
-           col  = sc_cluster)) +
+           col  = sc_cluster,
+           size = all_data$score)) +
     geom_point() +
     theme(panel.background = element_blank(),
           axis.title = element_text(face = "bold",
@@ -209,8 +210,9 @@ scPlot <- ggplot(data = tsne_data,
     ylab("V2") + xlab("V1") +
     scale_colour_discrete(name = "Clusters")
 print(scPlot)
+ggsave('../graphs/spectral_clustering.png', scPlot)
 
-
+## plot with score
 scorePlot <- ggplot(data = tsne_data,
        aes(x = X,
            y = Y,
@@ -228,3 +230,8 @@ scorePlot <- ggplot(data = tsne_data,
     ylab("V2") + xlab("V1") +
     scale_colour_discrete(name = "Calificación")
 print(scorePlot)
+ggsave('../graphs/spectral_clustering_score.png', scorePlot)
+
+## SAVE DATA
+c_data_nt$cluster <- sc_cluster
+write.csv(c_data_nt, '../outputData/clustered_data.csv', row.names = FALSE)
