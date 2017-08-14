@@ -195,7 +195,7 @@ sc_cluster <- as.factor(specc(as.matrix(tsne_data), centers = 6))
 scPlot <- ggplot(data = tsne_data,
        aes(x = X,
            y = Y,
-           col = sc_cluster)) +
+           col  = sc_cluster)) +
     geom_point() +
     theme(panel.background = element_blank(),
           axis.title = element_text(face = "bold",
@@ -209,3 +209,22 @@ scPlot <- ggplot(data = tsne_data,
     ylab("V2") + xlab("V1") +
     scale_colour_discrete(name = "Clusters")
 print(scPlot)
+
+
+scorePlot <- ggplot(data = tsne_data,
+       aes(x = X,
+           y = Y,
+           col  = all_data$score)) +
+    geom_point() +
+    theme(panel.background = element_blank(),
+          axis.title = element_text(face = "bold",
+                                    color = "#1972b9"),
+          legend.title = element_text(face = "bold",
+                                    color = "#424242"),
+          panel.grid.major = element_line(colour = "#BDBDBD",
+                                          linetype = "dotted"),
+          panel.grid.minor = element_line(colour = "#E0E0E0",
+                                          linetype = "dotted")) +
+    ylab("V2") + xlab("V1") +
+    scale_colour_discrete(name = "Calificación")
+print(scorePlot)
