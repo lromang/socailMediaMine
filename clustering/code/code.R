@@ -44,6 +44,12 @@ library(tm)
 
 ## Clustering
 library(cluster)
+library(kernlab)
+library(dbscan)
+library(EMCluster)
+library(clValid)
+library(fpc)
+
 
 ## Dimensionality reduction
 library(Rtsne)
@@ -175,24 +181,31 @@ clust_dist <- daisy(all_data,
                    metric = 'gower',
                    type   = list(logratio = 3))
 
-## Selecting number of clusters
-sil_width <- c()
-for(i in 2:10){
-    sil_width[i] <- pam(clust_dist, diss = TRUE, k = i)$silinfo$avg.width
-}
-plot(1:10, sil_width)
-
-## best number of clusters k = 4
-pam_fit <- pam(clust_dist, diss = TRUE, k = 10)
-
 ## TSNE visualization
 tsne_data <- Rtsne(clust_dist, is_distance = TRUE)
 
 tsne_data <- tsne_data$Y   %>%
     data.frame()          %>%
-    setNames(c('X', 'Y')) %>%
-    mutate(cluster = factor(pam_fit$clustering))
+    setNames(c('X', 'Y'))
 
-ggplot(data = tsne_data,
-       aes(x = X, y = Y, color = cluster)) +
-    geom_point()
+## Spectral Clustering
+sc_cluster <- as.factor(specc(as.matrix(tsne_data), centers = 6))
+
+## plot
+scPlot <- ggplot(data = tsne_data,
+       aes(x = X,
+           y = Y,
+           col = sc_cluster)) +
+    geom_point() +
+    theme(panel.background = element_blank(),
+          axis.title = element_text(face = "bold",
+                                    color = "#1972b9"),
+          legend.title = element_text(face = "bold",
+                                    color = "#424242"),
+          panel.grid.major = element_line(colour = "#BDBDBD",
+                                          linetype = "dotted"),
+          panel.grid.minor = element_line(colour = "#E0E0E0",
+                                          linetype = "dotted")) +
+    ylab("V2") + xlab("V1") +
+    scale_colour_discrete(name = "Clusters")
+print(scPlot)
