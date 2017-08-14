@@ -204,39 +204,8 @@ gplaces <- function(lat, lon, r, type, keyword = NULL){
                   "&key=AIzaSyCHpy9FreifSRimSSkl4p7DV3wq4pNZ108",
                   sep = '')
     }
-    document <- RJSONIO::fromJSON(a)$results
-    ## Acomodo los resultados en una matriz
-    places           <- data.frame(matrix(0, length(document), 8))
-    colnames(places) <- c("name", "rating", "type",
-                         "dir", "place_id", "lat", "lon")
-    places$rating    <- NA
-    for(i in 1:length(document)){
-        places$name[i]     <- document[[i]]$name
-        places$place_id[i] <- document[[i]]$place_id
-        ## If location available
-        if(length(document[[i]]$geometry$location) > 0){
-            places$lat[i]    <- document[[i]]$geometry$location[1]
-            places$lon[i]    <- document[[i]]$geometry$location[2]
-        }
-        ## If rating available
-        if(length(document[[i]]$rating) > 0){
-            places$rating[i] <- document[[i]]$rating
-        }
-        ## If type available
-        if(length(document[[i]]$types) > 0){
-            vec <- c()
-            for(j in 1:(length(document[[i]]$types))){
-                vec <- paste(vec, document[[i]]$types[[j]], collapse = ' ')
-            }
-            places$type[i] <- vec
-        }
-        ## If vicinity available
-        if(length(document[[i]]$vicinity)>0){
-            places$dir[i] <- document[[i]]$vicinity
-        }
-    }
-    rownames(places) <- 1:nrow(places)
-    places
+    ##document <- RJSONIO::fromJSON(a)$results
+    query_to_matrix(a)
 }
 
 ## ----------------------------------------
