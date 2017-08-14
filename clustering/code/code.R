@@ -60,6 +60,10 @@ toText <- function(messages){
     messages
 }
 
+toTextList <- function(tags){
+    tags   <- llply(tags, function(t) t <- str_split(t, ','))
+}
+
 ## ----------------------------------------
 ## Read in data
 ## ----------------------------------------
