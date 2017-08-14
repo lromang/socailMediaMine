@@ -33,9 +33,6 @@ library(datasets)
 library(plyr)
 library(dplyr)
 
-## YELP
-library(yelpr)
-
 ## URL
 library(httr)
 library(httpuv)
@@ -44,6 +41,12 @@ library(httpuv)
 library(stringr)
 library(tau)
 library(tm)
+
+## Clustering
+library(cluster)
+
+## Dimensionality reduction
+library(Rtsne)
 
 ## ----------------------------------------
 ## Functions
@@ -166,3 +169,30 @@ c_data_nt[is.na(c_data_nt)] <- -1
 ## all data
 all_data <- cbind(c_data_nt,
                  term_matrix)
+
+## Clustering
+clust_dist <- daisy(all_data,
+                   metric = 'gower',
+                   type   = list(logratio = 3))
+
+## Selecting number of clusters
+sil_width <- c()
+for(i in 2:10){
+    sil_width[i] <- pam(clust_dist, diss = TRUE, k = i)$silinfo$avg.width
+}
+plot(1:10, sil_width)
+
+## best number of clusters k = 4
+pam_fit <- pam(clust_dist, diss = TRUE, k = 10)
+
+## TSNE visualization
+tsne_data <- Rtsne(clust_dist, is_distance = TRUE)
+
+tsne_data <- tsne_data$Y   %>%
+    data.frame()          %>%
+    setNames(c('X', 'Y')) %>%
+    mutate(cluster = factor(pam_fit$clustering))
+
+ggplot(data = tsne_data,
+       aes(x = X, y = Y, color = cluster)) +
+    geom_point()
