@@ -103,11 +103,11 @@ clean_data <- data.frame(
     'visa'      = data$Visa,
     'state'     = data$Estado,
     'del'       = data$Delegación,
-    'quarter'   = data$Colonia,
+    'quarter'   = toText(data$Colonia),
     'zip.code'  = data$Código.Postal,
-    'street'    = data$Calle,
-    'corner'    = data$Esquina,
-    'inBetween' = data$Entre,
+    'street'    = toText(data$Calle),
+    'corner'    = toText(data$Esquina),
+    'inBetween' = toText(data$Entre),
     'numExt'    = data$NumExt,
     'numInt'    = data$NumInt,
     'lat'       = data$Latitud,
@@ -129,4 +129,40 @@ all_text <- paste(clean_data$subTit,
                  clean_data$services,
                  sep = ' ')
 
+## Unique places
+clean_data <- clean_data[!duplicated(all_text), ]
+
 ## Get Word Term Matrix
+frex  <- 2
+words <- tokenize(all_text)
+words <- words[str_length(words) > 2]
+words <- removeNumbers(words)
+words <- plyr::count(words)
+words <- words[!is.na(words$x),]
+words <- words[words$freq > frex,]
+term_matrix <- data.frame(matrix(0,
+                                nrow = length(unique(all_text)),
+                                ncol = nrow(words)),
+                        row.names    = unique(all_text))
+colnames(term_matrix) <- words$x
+## Matrix fill-in
+for(i in 1:length(unique(all_text))){
+  for(j in 1:ncol(term_matrix)){
+      term_matrix[i, j] <- str_count(rownames(term_matrix)[i],
+                                    colnames(term_matrix)[j])
+  }
+}
+
+## Matrix without text
+c_data_nt <- dplyr::select(clean_data,
+                          -subTit,
+                          -contents,
+                          -tags,
+                          -services,
+                          -date)
+## NA <- -1
+c_data_nt[is.na(c_data_nt)] <- -1
+
+## all data
+all_data <- cbind(c_data_nt,
+                 term_matrix)
