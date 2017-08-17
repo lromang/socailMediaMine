@@ -132,11 +132,13 @@ clean_data$state[clean_data$state == 'Distrito Federal'] <- 'Ciudad de México'
 ## ----------------------------------------
 
 ## Paste Textual Variables
-all_text <- paste(clean_data$subTit,
-                 clean_data$contents,
-                 clean_data$tags,
-                 clean_data$services,
-                 sep = ' ')
+## Control which text variables are used
+## all_text <- paste(clean_data$subTit,
+##                 clean_data$contents,
+##                 clean_data$tags,
+##                 clean_data$services,
+##                 sep = ' ')
+all_text <- paste(clean_data$tags, sep = ' ')
 
 ## Unique places
 clean_data <- clean_data[!duplicated(all_text), ]
@@ -172,8 +174,11 @@ c_data_nt <- dplyr::select(clean_data,
 ## NA <- -1
 c_data_nt[is.na(c_data_nt)] <- -1
 
+## SELECT VARIABLES FOR CLUSTERING
+all_data <- term_matrix
+
 ## all data
-all_data <- cbind(c_data_nt,
+all_data <- cbind(c_data_nt[,c(2,20,21)],
                  term_matrix)
 
 ## Clustering
@@ -182,7 +187,7 @@ clust_dist <- daisy(all_data,
                    type   = list(logratio = 3))
 
 ## TSNE visualization
-tsne_data <- Rtsne(clust_dist, is_distance = TRUE)
+tsne_data <- Rtsne(clust_dist, is_distance = TRUE, perplexity = 5) ## def perp = 30
 
 tsne_data <- tsne_data$Y   %>%
     data.frame()          %>%
@@ -195,8 +200,8 @@ sc_cluster <- as.factor(specc(as.matrix(tsne_data), centers = 6))
 scPlot <- ggplot(data = tsne_data,
        aes(x = X,
            y = Y,
-           col  = sc_cluster,
-           size = all_data$score)) +
+           col  = sc_cluster)) + ##,
+##           size = all_data$score)) +
     geom_point() +
     theme(panel.background = element_blank(),
           axis.title = element_text(face = "bold",
@@ -210,7 +215,7 @@ scPlot <- ggplot(data = tsne_data,
     ylab("V2") + xlab("V1") +
     scale_colour_discrete(name = "Clusters")
 print(scPlot)
-ggsave('../graphs/spectral_clustering.png', scPlot)
+ggsave('../graphs/spectral_clustering_tags_n_coords_n_type.png', scPlot)
 
 ## plot with score
 scorePlot <- ggplot(data = tsne_data,
@@ -230,8 +235,8 @@ scorePlot <- ggplot(data = tsne_data,
     ylab("V2") + xlab("V1") +
     scale_colour_discrete(name = "Calificación")
 print(scorePlot)
-ggsave('../graphs/spectral_clustering_score.png', scorePlot)
+## ggsave('../graphs/spectral_clustering_score.png', scorePlot)
 
 ## SAVE DATA
-c_data_nt$cluster <- sc_cluster
-write.csv(c_data_nt, '../outputData/clustered_data.csv', row.names = FALSE)
+## c_data_nt$cluster_tags_n_coords_n_type <- sc_cluster
+## write.csv(c_data_nt, '../outputData/clustered_data_only_tags.csv', row.names = FALSE)
